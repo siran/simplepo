@@ -15,7 +15,8 @@
       return str.replace(/&/g,'&amp;').replace(/>/g,'&gt;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
     }
     $.nl2br = function(str) {
-      return str.replace("\n",'<br />');
+      return str.replace("\n",'<br />', 'g');
+	  //return str.replace("\n",'\\n','g');
     }
     // jQuery function that send Post request to json rpc
     $.messageService = function(method, params,callback,error_handler) {
