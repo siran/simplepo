@@ -195,6 +195,7 @@
         msg2.msgstr == "" ? $row2.addClass('empty') : $row2.removeClass('empty');
         msg2.fuzzy == 1 ? $row2.addClass('f').find('.fuzzy').text('F') : $row2.removeClass('f').find('.fuzzy').text('');
         msg2.is_obsolete && $row2.addClass('d').find('.depr').text('D');
+		$row2.find('.updated_at div').text("now");
       };
       // Fill the table with all of the messages
       var fillMsgTable = function(catalogue_id) {
@@ -226,11 +227,18 @@
                       + (!obj.msgstr.length ? 'empty ' : '')
                       + (obj.fuzzy == 1 ? 'f ' : '')
                       + (obj.is_obsolete ? 'd ' : ''); 
+		updatedat = obj.updated_at;
+		datesplit = updatedat.split(/[- :]/);
+		datestr = Date(datesplit);
+		dateobj = new Date(datestr);
+		dateformatted = dateobj.toDateString();
         return  ''
                 +  '<tr class="' + tr_class + '"><td class="msgid"><div><span>'
                 + $.escape(obj.msgid) + '</span></div></td>'
                 + '<td class="msgstr"><div>'
                 + $.escape(obj.msgstr) + '</div></td>'
+                + '<td class="updated_at" align="center"><div>'
+                + dateformatted + '</div></td>'				
                 + '<td class="fuzzy">'
                 + (obj.fuzzy == 1 ? 'F' : '')
                 + '</td>'
@@ -404,6 +412,7 @@
                   </div>
                 </th>
                 <th class="msgstr"><img src="incl/img/blank.gif"/>Translation</th>
+				<th class="updated_at"><img src="incl/img/blank.gif"/>Modified on Date</th>
                 <th class="fuzzy"><img src="incl/img/blank.gif"/>F</th>
                 <th class="depr"><img src="incl/img/blank.gif"/>D</th>
             </tr>

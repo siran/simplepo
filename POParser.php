@@ -39,14 +39,16 @@ class DBPoMsgStore implements PoMsgStore {
       $this->catalogue_id = $catalogue['id'];
     }
     #Get keys to prevent them to be erased
-    $keys = $q->sql("SELECT msgid FROM {messages}
+    $keys = $q->sql("SELECT msgid,updated_at FROM {messages}
                      WHERE catalogue_id=? AND msgstr != ''",
                      $this->catalogue_id)
-                    ->fetchCol();
+                    ->fetchAll();
+
     #Hashmap for perfs
     if ( is_array($keys) ) {
-        foreach($keys as $key) {
-		$this->filled_keys[$key] = $key;
+        foreach($keys as $k => $key) {
+		$this->filled_keys[$key['msgid']] = $key['msgid'];
+		$this->updated_at[$key['msgid']] = $key['updated_at'];
 	}
     }
   }
@@ -59,9 +61,10 @@ class DBPoMsgStore implements PoMsgStore {
 
     #TODO put this optional. Keys can be erased if option is on.
     # Give priority to simplepo for already translated keys.
-    if ( !isset( $this->filled_keys[$msg["msgid"]] ) ) {
+    if ( $this->force || !isset( $this->filled_keys[$msg["msgid"]] ) ) {
+		$updated_at = empty($this->updated_at[$msg["msgid"]]) ? null : $this->updated_at[$msg["msgid"]];
         $q->sql("DELETE FROM {messages} 
-                 WHERE  catalogue_id=? AND BINARY msgid= BINARY ? AND msgstr = ''",
+                 WHERE  catalogue_id=? AND BINARY msgid= BINARY ?",
                  $this->catalogue_id,$msg["msgid"])
                  ->execute();
 	#FIXME Need to be checked: was the previous delete done? if yes go on else stop.
@@ -74,11 +77,11 @@ class DBPoMsgStore implements PoMsgStore {
         $q->sql("INSERT INTO {messages} 
                  (catalogue_id, msgid, msgstr, comments, extracted_comments,
                  reference,flags, is_obsolete, previous_untranslated_string,
-                 is_header) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?)",
+                 is_header, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?)",
                  $this->catalogue_id , $msg["msgid"], $msg["msgstr"], 
                  $msg["translator-comments"], $msg["extracted-comments"],
                  $msg["reference"], $msg["flags"], $msg["is_obsolete"], 
-                 $msg["previous-untranslated-string"],$msg['is_header'])
+                 $msg["previous-untranslated-string"],$msg['is_header'], $updated_at)
                  ->execute();
     }
   }

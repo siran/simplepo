@@ -43,7 +43,7 @@ class MessageService {
       $q = new Query();
       $messages = $q->sql("SELECT * 
         FROM {messages} 
-        WHERE catalogue_id=? AND is_header <> 1 
+        WHERE catalogue_id=? AND is_header <> 1 AND is_obsolete <> 1
         ORDER BY msgstr != '', flags != 'fuzzy' ", $id)
         ->fetchAll();
 			

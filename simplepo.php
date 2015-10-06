@@ -17,7 +17,7 @@ class SimplePO{
 	  $this->stderrh = fopen('php://stderr','w');
 	  $this->parseArguments($argc, $argv);
 	  $MsgStore = new DBPoMsgStore();
-		
+		$MsgStore->force = $this->force;
 		
 		if($this->doInstall) {
 			$this->install($this->force);
