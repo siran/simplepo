@@ -228,10 +228,12 @@
                       + (obj.fuzzy == 1 ? 'f ' : '')
                       + (obj.is_obsolete ? 'd ' : ''); 
 		updatedat = obj.updated_at;
-		datesplit = updatedat.split(/[- :]/);
-		datestr = Date(datesplit);
-		dateobj = new Date(datestr);
-		dateformatted = dateobj.toDateString();
+		if (updatedat == '0000-00-00 00:00:00') {
+			dateformatted = 'never';
+		} else {
+			console.log(updatedat);
+			dateformatted = new Date(Date.parse(updatedat.replace('-','/','g'))).toDateString();
+		}
         return  ''
                 +  '<tr class="' + tr_class + '"><td class="msgid"><div><span>'
                 + $.escape(obj.msgid) + '</span></div></td>'
