@@ -101,9 +101,18 @@
 
         // Add click event to next button in the edit bar
         $('#next').live("click", function(e){
-          e.preventDefault();
-          moveBy(1);
-          $('#msgstr').focus();
+			e.preventDefault();
+			$('#msgstr').focus();
+			if ( $('#msg_table tr.selected').length ) {
+				var $row = $('#msg_table tr:eq(' + getCurrentMessage() + ')');    
+				var msg = msgs[$row.data('index')];
+
+				$.messageService('updateDate', 
+				[cat_id, msg.msgid], 
+				function(ret) {$row.find('.updated_at div').text("now");}
+				);		  			
+			}
+			moveBy(1);
         });
         
         $('#msgstr').focus(function(e){
@@ -231,7 +240,7 @@
 		if (updatedat == '0000-00-00 00:00:00') {
 			dateformatted = 'never';
 		} else {
-			console.log(updatedat);
+			//console.log(updatedat);
 			dateformatted = new Date(Date.parse(updatedat.replace('-','/','g'))).toDateString();
 		}
         return  ''

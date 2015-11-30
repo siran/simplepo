@@ -67,9 +67,17 @@ class MessageService {
       $q = new Query();
 			$flags = $fuzzy ? 'fuzzy' : '';
       $q->sql("UPDATE {messages} SET comments=?, msgstr=?, flags=? WHERE msgid=? AND catalogue_id=?", $comments, $msgstr, $flags, $msgid, $catalogue_id)->execute();
-      var_dump($catalogue_id);
-      echo "true";
+      //var_dump($catalogue_id);
+      //echo "true";
     }
+	
+	function updateDate($catalogue_id, $msgid) {
+      $q = new Query();
+      $q->sql("UPDATE {messages} SET updated_at = NOW() WHERE msgid=? AND catalogue_id=?", $msgid, $catalogue_id)->execute();
+      //var_dump($catalogue_id);
+      //echo "true";
+	}
+	
 	function makeError() {
 		throw new Exception("This is an error");
 	}

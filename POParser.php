@@ -67,6 +67,9 @@ class DBPoMsgStore implements PoMsgStore {
                  WHERE  catalogue_id=? AND BINARY msgid= BINARY ?",
                  $this->catalogue_id,$msg["msgid"])
                  ->execute();
+		// debug("DELETE FROM {messages} 
+                 // WHERE  catalogue_id=? AND BINARY msgid= BINARY ?",
+                 // $this->catalogue_id,$msg["msgid"]);
 	#FIXME Need to be checked: was the previous delete done? if yes go on else stop.
         $allow_empty_fields = array('translator-comments', 'extracted-comments', 'reference', 'flags', 'is_obsolete', 'previous-untranslated-string');
         foreach($allow_empty_fields as $field) {
