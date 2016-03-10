@@ -39,7 +39,7 @@ class DBPoMsgStore implements PoMsgStore {
       $this->catalogue_id = $catalogue['id'];
     }
     #Get keys to prevent them to be erased
-    $keys = $q->sql("SELECT msgid,updated_at FROM {messages}
+    $keys = $q->sql("SELECT msgid,updated_at,id FROM {messages}
                      WHERE catalogue_id=? AND msgstr != ''",
                      $this->catalogue_id)
                     ->fetchAll();
@@ -49,6 +49,7 @@ class DBPoMsgStore implements PoMsgStore {
         foreach($keys as $k => $key) {
 		$this->filled_keys[$key['msgid']] = $key['msgid'];
 		$this->updated_at[$key['msgid']] = $key['updated_at'];
+		$this->message_id[$key['msgid']] = $key['id'];
 	}
     }
   }
@@ -63,9 +64,10 @@ class DBPoMsgStore implements PoMsgStore {
     # Give priority to simplepo for already translated keys.
     if ( $this->force || !isset( $this->filled_keys[$msg["msgid"]] ) ) {
 		$updated_at = empty($this->updated_at[$msg["msgid"]]) ? null : $this->updated_at[$msg["msgid"]];
+		$message_id = empty($this->message_id[$msg["msgid"]]) ? null : $this->message_id[$msg["msgid"]];
         $q->sql("DELETE FROM {messages} 
-                 WHERE  catalogue_id=? AND BINARY msgid= BINARY ?",
-                 $this->catalogue_id,$msg["msgid"])
+                 WHERE  catalogue_id=? AND id = ?",
+                 $this->catalogue_id,$message_id)
                  ->execute();
 		// debug("DELETE FROM {messages} 
                  // WHERE  catalogue_id=? AND BINARY msgid= BINARY ?",
